@@ -5,19 +5,8 @@
 function __Array_test() {
 	show_debug_message("#### STARTING TESTS ####")
 	
-	
-	//gc_enable(false)
-	
-	
 	// Creating
 	var array = new Array(0)
-	global.array2 = new Array(0, 2, 3, 4, pi, "string")
-	
-	repeat(10000) {
-		global.array2.add(1000000)
-	}
-	
-	//gc_collect()
 	
 	
 	// Adding new stuff
@@ -57,9 +46,6 @@ function __Array_test() {
 	
 	// Chaining methods
 	show_debug_message("#### CHAINING METHODS ####")
-	
-	array = new Array(1, "string", pi)
-	
 	array = array.insert(0, "first")
 				 .insert(1, "second")
 				 .append("last", "last2")

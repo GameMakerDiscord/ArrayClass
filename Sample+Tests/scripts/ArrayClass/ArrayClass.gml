@@ -28,7 +28,7 @@ function Array() constructor {
 	///@function	append(value, value2, ..)
 	///@description	Adds (a) value(s) to the end of the array
 	///@param		{any} value
-	static append = function(value) {
+	append = function(value) {
 		for(var i = 0; i < argument_count; ++i) {
 			var val = argument[i]
 			content[size] = val;
@@ -41,7 +41,7 @@ function Array() constructor {
 	///@function	add(value, value2, ..)
 	///@description Mirrors append() method
 	///@param		{any} value
-	static add = function(value) {
+	add = function(value) {
 		for(var i = 0; i < argument_count; ++i) {
 			var val = argument[i]
 			content[size] = val;
@@ -54,7 +54,7 @@ function Array() constructor {
 	///@function	concat(other)
 	///@description	Adds every element of the second array to this array
 	///@param		{Array/array} other
-	static concat = function(_other) {
+	concat = function(_other) {
 		if(!is_Array(_other)) {
 			if is_array(_other) {
 				_other = array_to_Array(_other)
@@ -74,7 +74,7 @@ function Array() constructor {
 	
 	///@function	copy()
 	///@description	Returns a copy of the array object
-	static copy = function() {
+	copy = function() {
 		ans = new Array();
 		
 		forEach(function(el) {
@@ -86,7 +86,7 @@ function Array() constructor {
 	
 	///@function	clear()
 	///@description	clears an array object
-	static clear = function() {
+	clear = function() {
 		content = [];
 		size = 0;
 		
@@ -96,7 +96,7 @@ function Array() constructor {
 	///@function	remove(pos)
 	///@description	removes the value at given position
 	///@param		{real} pos
-	static remove = function(pos) {
+	remove = function(pos) {
 		if(pos < 0)
 			pos += size;
 		
@@ -122,13 +122,13 @@ function Array() constructor {
 	
 	///@function	empty()
 	///@description	Returns true if the array is empty and false otherwise
-	static empty = function() {
+	empty = function() {
 		return size == 0;
 	}
 	
 	///@function	equal(other)
 	///@description	Returns true if arrays are equal and false otherwise
-	static equal = function(_other) {
+	equal = function(_other) {
 		if(!is_Array(_other)) {
 			__throw( "TypeError: trying to compare "+typeof(_other)+" with Array");
 			return false;
@@ -163,7 +163,7 @@ function Array() constructor {
 	
 	///@function	exists(value)
 	///@description	Returns true if the value exists in the array and false otherwise
-	static exists = function(_val) {
+	exists = function(_val) {
 		val = _val;
 		ans = false;
 		
@@ -183,7 +183,7 @@ function Array() constructor {
 	///				Function func gets (x, *pos) as input
 	///				Note: Clean function. Does not affect the original array!
 	///@param		{function} func
-	static filter = function(_func) {
+	filter = function(_func) {
 		func = _func;
 		ans = new Array();
 		
@@ -200,7 +200,7 @@ function Array() constructor {
 	///@function	find(value)
 	///@description	finds a value and returns its position. -1 if not found
 	///@param		{any} value
-	static find = function(_val) {
+	find = function(_val) {
 		val = _val;
 		ans = -1;
 		
@@ -217,7 +217,7 @@ function Array() constructor {
 	///@function	findAll(value)
 	///@description	finds all places a value appears and returns an Array with all the positions. empty set if not found
 	///@param		{any} value
-	static findAll = function(_val) {
+	findAll = function(_val) {
 		val = _val;
 		ans = new Array();
 		
@@ -231,7 +231,7 @@ function Array() constructor {
 
 	///@function	first()
 	///@description	Returns the first value of the array
-	static first = function() {
+	first = function() {
 		return get(0);
 	}
 	
@@ -240,7 +240,7 @@ function Array() constructor {
 	///				Function func gets (x, *pos) as arguments
 	///				Note: Loop will stop immediately if the function returns anything but zero or undefined
 	///@param		{function} func(x, *pos)
-	static forEach = function(func) {
+	forEach = function(func) {
 		for(var i = 0; i < size; i++) {
 			var res = func(get(i), i)
 			if(!is_undefined(res) and res != 0) {
@@ -254,7 +254,7 @@ function Array() constructor {
 	///@function	get(pos)
 	///@description	Returns value at given pos
 	///@param		{real} pos
-	static get = function(pos) {
+	get = function(pos) {
 		if(pos < 0)
 			pos += size; //i.e. Array.get(-1) = Array.last()
 		
@@ -275,7 +275,7 @@ function Array() constructor {
 	///@description	inserts a value into the array at given position
 	///@param		{real} pos
 	///@param		{any} value
-	static insert = function(pos, value) {
+	insert = function(pos, value) {
 		if(pos < 0)
 			pos += size;
 		
@@ -299,7 +299,7 @@ function Array() constructor {
 	///@function	lambda(func)
 	///@description	Loops through the array and applies the function to each element
 	///@param		{function} func(x, *pos)
-	static lambda = function(func) {
+	lambda = function(func) {
 		for(var i = 0; i < size; i++) {
 			set(i, func(get(i), i) );
 		}
@@ -309,13 +309,13 @@ function Array() constructor {
 	
 	///@function	last()
 	///@description	Returns the last value of the array
-	static last = function() {
+	last = function() {
 		return get(-1);
 	}
 	
 	///@function	_max()
 	///@description	Returns a maximum of the array. Only works with numbers
-	static _max = function() {
+	_max = function() {
 		ans = get(0);
 		
 		forEach(function(x) {
@@ -334,7 +334,7 @@ function Array() constructor {
 	
 	///@function	_min()
 	///@description	Returns a minimum of the array. Only works with numbers
-	static _min = function() {
+	_min = function() {
 		ans = content[0];
 		
 		forEach(function(x) {
@@ -356,7 +356,7 @@ function Array() constructor {
 	///@note		IMPORTANT! Don't try to use this with data structures, as results may be unpredictable
 	///				(Use forEach() with your own logic instead)
 	///@param		{any} value
-	static number = function(_val) {
+	number = function(_val) {
 		val = _val;
 		ans = 0;
 		
@@ -370,7 +370,7 @@ function Array() constructor {
 	
 	///@function	pop()
 	///@description	removes a value from the end of the array and returns it
-	static pop = function() {
+	pop = function() {
 		ans = last();
 		if(empty()) {
 			__throw( "Error: trying to pop value from empty Array");
@@ -384,7 +384,7 @@ function Array() constructor {
 	
 	///@function	popBack()
 	///@description	removes a value from the beginning of the array and returns it
-	static popBack = function() {
+	popBack = function() {
 		ans = first();
 		remove(0);
 		
@@ -394,13 +394,13 @@ function Array() constructor {
 	///@function	pushBack(value)
 	///@description	inserts a value to the beginning of the array
 	///@param		{any} value
-	static pushBack = function(val) {
+	pushBack = function(val) {
 		insert(0, val);
 	}
 	
 	///@function	getRandom()
 	///@description Returns a random element from the array
-	static getRandom = function() {
+	getRandom = function() {
 		var idx = irandom(size-1)
 		if empty() {
 			var ans = undefined
@@ -415,7 +415,7 @@ function Array() constructor {
 	///@function	resize(size)
 	///@description	resizes the array. Sizing up leads to filling the empty spots with zeros
 	///@param		{real} size
-	static resize = function(size) {
+	resize = function(size) {
 		if(size < 0) {
 			__throw( "Error: array size cannot be negative");
 			return self;
@@ -433,7 +433,7 @@ function Array() constructor {
 	
 	///@function	reverse()
 	///@description	reverses the array, affecting it
-	static reverse = function() {
+	reverse = function() {
 		ans = new Array();
 		forEach(function(element, pos) {
 			ans.set(size-pos-1, element);
@@ -445,7 +445,7 @@ function Array() constructor {
 	
 	///@function	reversed()
 	///@description	Returns reversed version of the array, without affecting the original
-	static reversed = function() {
+	reversed = function() {
 		ans = new Array();
 		forEach(function(element, pos) {
 			ans.set(size-pos-1, element);
@@ -458,7 +458,7 @@ function Array() constructor {
 	///@description	sets value in the array at given index
 	///@param		{real} pos
 	///@param		{any} item
-	static set = function(pos, value) {
+	set = function(pos, value) {
 		if(pos < 0)
 			pos += size;
 		
@@ -475,7 +475,7 @@ function Array() constructor {
 	///@description	Returns a slice from the array with given boundaries. If begin > end - returns reversed version
 	///@param		{real} begin
 	///@param		{real} end
-	static slice = function(_begin, _end) {
+	slice = function(_begin, _end) {
 		if(is_undefined(_begin))
 			_begin = 0;
 		
@@ -506,7 +506,7 @@ function Array() constructor {
 	///@param		{function} func
 	///@param		{real} *startpos	Default - 0
 	///@param		{real} *endpos		Default - size
-	static sort = function(compare, _begin, _end) {
+	sort = function(compare, _begin, _end) {
 		if(is_undefined(_begin))
 			_begin = 0;
 		
@@ -536,14 +536,14 @@ function Array() constructor {
 	
 	///@function	sorted(func, *startpos, *endpos)
 	///@description Mirrors .sort() function, but doesn't affect the original Array
-	static sorted = function(compare, _begin, _end) {
+	sorted = function(compare, _begin, _end) {
 		var ans = copy() // self.copy()
 		return ans.sort(compare, _begin, _end)
 	}
 	
 	///@function	shuffle()
 	///@description shuffles the array (randomly replaces every element)
-	static shuffle = function() {
+	shuffle = function() {
 		// Knuth shuffle implementation
 		for(var i = size-1; i > 0; --i) {
 			var j = irandom_range(0, i)
@@ -556,7 +556,7 @@ function Array() constructor {
 	
 	///@function	shuffled()
 	///@description	clean version of .shuffle()
-	static shuffled = function() {
+	shuffled = function() {
 		var ans = copy();
 		return ans.shuffle();
 	}
@@ -564,7 +564,7 @@ function Array() constructor {
 	///@function	sum()
 	///@description	Returns the sum of all the elements of the array. concats strings.
 	///NOTE: Works only with strings or numbars and only if all the elements are the same type.
-	static sum = function() {
+	sum = function() {
 		if(is_string(get(0)))
 			ans = "";
 		else if(is_numeric(get(0)))
@@ -588,7 +588,7 @@ function Array() constructor {
 	///@description	swaps 2 values at given positions
 	///@param		{real} pos1
 	///@param		{real} pos2
-	static swap = function(pos1, pos2) {
+	swap = function(pos1, pos2) {
 		var temp = get(pos1);
 		set(pos1, get(pos2));
 		set(pos2, temp);
@@ -598,7 +598,7 @@ function Array() constructor {
 	
 	///@function	unique()
 	///@description	Returns a copy of this Array object, deleting all duplicates
-	static unique = function() {
+	unique = function() {
 		ans = new Array();
 		
 		forEach(function(x) {
@@ -613,12 +613,12 @@ function Array() constructor {
 		append(argument[i])
 	
 	
-	static toString = function() {
+	toString = function() {
 		str = "[";
 		
 		forEach(function(el, i) {
 			str += string(el);
-			if(i < size-1)   
+			if(i < size-1)
 				str += ", ";
 		});
 		
