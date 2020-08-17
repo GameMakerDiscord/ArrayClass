@@ -1,8 +1,12 @@
 # ArrayClass
 Better arrays/ds_lists for GameMaker Studio 2.3
 
-ArrayClass is a library that improves the developing experience and reduces frustration when working with arrays
-It's main focus is not 
+ArrayClass is a library that improves the developing experience and reduces frustration when working with arrays.
+
+It's main focus is not performance, but rather handiness for developer
+
+
+### Maintained by [@evolutionleo](https://github.com/evolutionleo)
 
 ## Features:
 
