@@ -6,17 +6,13 @@ function __Array_test() {
 	show_debug_message("#### STARTING TESTS ####")
 	
 	
-	//gc_enable(false)
-	
-	
 	// Creating
 	var array = new Array(0)
-	global.array2 = new Array(0, 2, 3, 4, pi, "string")
 	
-	repeat(10000) {
-		global.array2.add(1000000)
-	}
 	
+	// Use these if you have fps issues due to garbage collection
+	// v F1 or Middle Click v
+	//gc_enable(false)
 	//gc_collect()
 	
 	
@@ -124,6 +120,9 @@ function __Array_test() {
 	show_debug_message("Sliced 0-4. Result: "+string(array_slice))
 	
 	
+	// Joining
+	show_debug_message("#### PRINTING (JOINING) ####")
+	show_debug_message(array.join("|"))
 	
 	
 	// sorting (slow, don't do every frame)
@@ -208,4 +207,38 @@ function __Array_test() {
 		var it = iter.get()
 		show_debug_message("Current iteration: "+string(it))
 	}
+	
+	
+	// convertation
+	show_debug_message("#### CONVERSION ####")
+	
+	var arr = ["Lowercase", "a"]
+	var Arr = new Array("Uppercase", "A")
+	
+	var list = ds_list_create()
+	ds_list_add(list, "ds", "list")
+	
+	
+	var a_to_A = array_to_Array(arr)
+	var a_to_l = array_to_ds_list(arr)
+	var A_to_a = Array_to_array(Arr)
+	var A_to_l = Array_to_ds_list(Arr)
+	var l_to_a = ds_list_to_array(list)
+	var l_to_A = ds_list_to_Array(list)
+	
+	show_debug_message("From regular array:")
+	show_debug_message(a_to_A)
+	show_debug_message(a_to_l)
+	
+	show_debug_message("From Array Class:")
+	show_debug_message(A_to_a)
+	show_debug_message(A_to_l)
+	
+	show_debug_message("From ds_list:")
+	show_debug_message(l_to_a)
+	show_debug_message(l_to_A)
+	
+	
+	ds_list_destroy(a_to_l)
+	ds_list_destroy(A_to_l)
 }

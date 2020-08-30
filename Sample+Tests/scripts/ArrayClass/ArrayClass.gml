@@ -2,6 +2,8 @@
 /// For examples see Tests.gml
 ///!!!
 
+// See type-conversion API at the bottom of this file
+
 
 ///@function	Array(*item1, *item2, ...)
 ///@description	Constructor funcion for Array objects
@@ -296,6 +298,36 @@ function Array() constructor {
 		return self;
 	}
 	
+	///@function	join(separator)
+	///@description returns a string, containing all of the array values separated by 'sep'
+	///@tip			to join part of the array, use array.slice().join()
+	///@param		{string} separator
+	///@param		{bool} show_bounds
+	static join = function(sep, show_bounds) {
+		if is_undefined(sep)
+			sep = ", "
+		if is_undefined(show_bounds)
+			show_bounds = true
+		
+		_sep = sep
+		
+		if show_bounds
+			str = "["
+		else
+			str = ""
+		
+		forEach(function(el, i) {
+			str += string(el)
+			if(i < size-1)
+				str += _sep
+		})
+		
+		if show_bounds
+			str += "]"
+		
+		return str
+	}
+	
 	///@function	lambda(func)
 	///@description	Loops through the array and applies the function to each element
 	///@param		{function} func(x, *pos)
@@ -389,6 +421,19 @@ function Array() constructor {
 		remove(0);
 		
 		return ans;
+	}
+	
+	///@function	push(value, value2, ..)
+	///@description Mirrors append() method
+	///@param		{any} value
+	static push = function(value) {
+		for(var i = 0; i < argument_count; ++i) {
+			var val = argument[i]
+			content[size] = val;
+			++size;
+		}
+		
+		return self;
 	}
 	
 	///@function	pushBack(value)
@@ -614,17 +659,7 @@ function Array() constructor {
 	
 	
 	static toString = function() {
-		str = "[";
-		
-		forEach(function(el, i) {
-			str += string(el);
-			if(i < size-1)   
-				str += ", ";
-		});
-		
-		str += "]";
-		
-		return str;
+		return self.join()
 	}
 }
 
@@ -717,6 +752,13 @@ function array_to_Array(array) {
 	return ans;
 }
 
+///@function	array_from_Array(Arr)
+///@description	Mirrors function Array_to_array()
+///@param		{Array} Arr
+function array_from_Array(Arr) {
+	return Array_to_array(Arr)
+}
+
 ///@function	ds_list_to_Array(list)
 ///@description	Returns an instance of Array object with all the contents of an array
 ///@param		{real} list
@@ -762,9 +804,53 @@ function ds_list_from_Array(Arr) {
 		return undefined;
 	}
 	
-	var list = ds_list_create()
+	_list = ds_list_create()
 	Arr.forEach(function(item) {
-		ds_list_add(list, item)
+		ds_list_add(_list, item)
 	})
-	return list
+	return _list
+}
+
+///@function	Array_to_ds_list(Arr)
+///@description	Mirrors function ds_list_from_Array()
+///@param		{Array} Arr
+function Array_to_ds_list(Arr) {
+	return ds_list_from_Array(Arr)
+}
+
+///@function	ds_list_to_array(ds_list)
+///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
+//				use ds_list_to_Array() for Array Class support
+///@param		{real} ds_list
+function ds_list_to_array(_list) {
+	var arr = []
+	
+	// ah yes, performance
+	for(var i = ds_list_size(_list) - 1; i >= 0; --i) {
+		arr[i] = _list[| i]
+	}
+	
+	return arr
+}
+
+///@function	ds_list_from_array(gm_array)
+///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
+//				use ds_list_from_Array() for Array Class support
+///@param		{array} arr
+function ds_list_from_array(arr) {
+	var _list = ds_list_create()
+	
+	for(var i = array_length(arr) - 1; i >= 0; --i) {
+		_list[| i] = arr[i]
+	}
+	
+	return _list
+}
+
+///@function	array_to_ds_list(gm_array)
+///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
+//				use ds_list_from_Array() for Array Class support
+///@param		{array} arr
+function array_to_ds_list(arr) {
+	return ds_list_from_array(arr)
 }
