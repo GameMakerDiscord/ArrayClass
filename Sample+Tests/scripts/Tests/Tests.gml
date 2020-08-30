@@ -120,6 +120,9 @@ function __Array_test() {
 	show_debug_message("Sliced 0-4. Result: "+string(array_slice))
 	
 	
+	// Joining
+	show_debug_message("#### PRINTING (JOINING) ####")
+	show_debug_message(array.join("|"))
 	
 	
 	// sorting (slow, don't do every frame)

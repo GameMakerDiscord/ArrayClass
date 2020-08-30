@@ -298,6 +298,36 @@ function Array() constructor {
 		return self;
 	}
 	
+	///@function	join(separator)
+	///@description returns a string, containing all of the array values separated by 'sep'
+	///@tip			to join part of the array, use array.slice().join()
+	///@param		{string} separator
+	///@param		{bool} show_bounds
+	static join = function(sep, show_bounds) {
+		if is_undefined(sep)
+			sep = ", "
+		if is_undefined(show_bounds)
+			show_bounds = true
+		
+		_sep = sep
+		
+		if show_bounds
+			str = "["
+		else
+			str = ""
+		
+		forEach(function(el, i) {
+			str += string(el)
+			if(i < size-1)
+				str += _sep
+		})
+		
+		if show_bounds
+			str += "]"
+		
+		return str
+	}
+	
 	///@function	lambda(func)
 	///@description	Loops through the array and applies the function to each element
 	///@param		{function} func(x, *pos)
@@ -391,6 +421,19 @@ function Array() constructor {
 		remove(0);
 		
 		return ans;
+	}
+	
+	///@function	push(value, value2, ..)
+	///@description Mirrors append() method
+	///@param		{any} value
+	static push = function(value) {
+		for(var i = 0; i < argument_count; ++i) {
+			var val = argument[i]
+			content[size] = val;
+			++size;
+		}
+		
+		return self;
 	}
 	
 	///@function	pushBack(value)
@@ -616,17 +659,7 @@ function Array() constructor {
 	
 	
 	static toString = function() {
-		str = "[";
-		
-		forEach(function(el, i) {
-			str += string(el);
-			if(i < size-1)   
-				str += ", ";
-		});
-		
-		str += "]";
-		
-		return str;
+		return self.join()
 	}
 }
 
