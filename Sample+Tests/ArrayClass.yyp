@@ -1,8 +1,9 @@
 {
   "resources": [
     {"id":{"name":"oMain","path":"objects/oMain/oMain.yy",},"order":0,},
-    {"id":{"name":"Tests","path":"scripts/Tests/Tests.yy",},"order":1,},
-    {"id":{"name":"ArrayClass","path":"scripts/ArrayClass/ArrayClass.yy",},"order":0,},
+    {"id":{"name":"ArrayClass","path":"scripts/ArrayClass/ArrayClass.yy",},"order":3,},
+    {"id":{"name":"Tests","path":"scripts/Tests/Tests.yy",},"order":0,},
+    {"id":{"name":"SpeedTimer","path":"scripts/SpeedTimer/SpeedTimer.yy",},"order":1,},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},"order":0,},
   ],
   "Options": [
@@ -11,6 +12,10 @@
     {"name":"macOS","path":"options/mac/options_mac.yy",},
     {"name":"Main","path":"options/main/options_main.yy",},
     {"name":"Windows","path":"options/windows/options_windows.yy",},
+    {"name":"Amazon Fire","path":"options/amazonfire/options_amazonfire.yy",},
+    {"name":"Android","path":"options/android/options_android.yy",},
+    {"name":"iOS","path":"options/ios/options_ios.yy",},
+    {"name":"tvOS","path":"options/tvos/options_tvos.yy",},
   ],
   "isDnDProject": false,
   "isEcma": false,
@@ -19,8 +24,8 @@
     "name": "Default",
     "children": [],
   },
-  "RoomOrder": [
-    {"name":"Room1","path":"rooms/Room1/Room1.yy",},
+  "RoomOrderNodes": [
+    {"roomId":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
   ],
   "Folders": [
     {"folderPath":"folders/Scripts.yy","order":5,"resourceVersion":"1.0","name":"Scripts","tags":[],"resourceType":"GMFolder",},
@@ -28,10 +33,10 @@
     {"folderPath":"folders/Rooms.yy","order":10,"resourceVersion":"1.0","name":"Rooms","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
-    {"targets":461609314234257646,"resourceVersion":"1.0","name":"audiogroup_default","resourceType":"GMAudioGroup",},
+    {"targets":-1,"resourceVersion":"1.3","name":"audiogroup_default","resourceType":"GMAudioGroup",},
   ],
   "TextureGroups": [
-    {"isScaled":true,"autocrop":true,"border":2,"mipsToGenerate":0,"targets":461609314234257646,"resourceVersion":"1.0","name":"Default","resourceType":"GMTextureGroup",},
+    {"isScaled":true,"autocrop":true,"border":2,"mipsToGenerate":0,"groupParent":null,"targets":-1,"resourceVersion":"1.3","name":"Default","resourceType":"GMTextureGroup",},
   ],
   "IncludedFiles": [
     {"CopyToMask":0,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"gcmt-dll.dll","resourceType":"GMIncludedFile",},
@@ -50,9 +55,9 @@
     {"CopyToMask":-1,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"gmlive-server.n","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
-    "IDEVersion": "2.3.0.529",
+    "IDEVersion": "2.3.1.542",
   },
-  "resourceVersion": "1.3",
+  "resourceVersion": "1.4",
   "name": "ArrayClass",
   "tags": [],
   "resourceType": "GMProject",
