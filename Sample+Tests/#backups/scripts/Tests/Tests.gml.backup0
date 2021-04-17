@@ -1,3 +1,4 @@
+// 2020-09-15 10:41:53
 //
 //
 ///@description		check out ArrayClass.gml for docs
@@ -29,7 +30,7 @@ function __Array_test() {
 	array.forEach(function(num, pos) {
 		if num == 3 {
 			show_debug_message(string(pos) + ") " + string(num) + " is for suckers")
-			ARRAY_LOOP = false
+			return 1
 			// break out of forEach()
 		}
 		
@@ -41,7 +42,7 @@ function __Array_test() {
 		}
 		
 		
-		// Please don't delete stuff inside .forEach(), use .filter() or .where() instead
+		// Please don't delete stuff inside .forEach(), use .filter() instead
 	})
 	show_debug_message(array)
 	
@@ -177,7 +178,6 @@ function __Array_test() {
 	
 	var uniq = array.unique() // like array but without duplicates
 	var num = uniq.number(2)
-	show_debug_message(uniq)
 	show_debug_message("Total amount of 2's: " + string(num))
 	
 	
@@ -250,74 +250,58 @@ function __Array_test() {
 	
 	
 	// DIFFERENT SORTING ALGORITHMS
-	show_debug_message("#### SORTING ALGORITHMS ####")
     var t = new SpeedTimer();
     
-	
-	show_debug_message("randomly generated array:")
 	// generate dataset
-	var array = new RandomArray(20, 1000)
-	if array.size <= 100
-		show_debug_message(array)
-	
-	
+	var array = new Array();
+	repeat(15) {
+	    array.append(irandom(1000));
+	}
 	
 	// radix sort
 	show_debug_message("#### RADIX SORT ####");
-	var arr = array.copy(); t.split(); // ignore array allocation time
 	
-	arr.radixSort(4); // 2875
-	show_debug_message(arr);
+	var arr = array.copy();
+	
+	var time = string(t.split());
+	show_debug_message("Array allocated in: "+time);
+	
+	show_debug_message(arr.radixSort(4));
 	
 	var time = string(t.split());
 	show_debug_message("RadixSorted in: "+time);
 	
+	// bogosort OMEGALUL
+// 	show_debug_message("#### BOGOSORT (OMG) ####");
+	
+// 	var arr = new Array(3812, 5, 604, 69, 31123, -123456, 1337, .56789, 404);
+// 	var time = string(t.split());
+// 	show_debug_message("Array allocated in: "+time);
+	
+// 	show_debug_message(arr.bogosort());
+	
+// 	var time = string(t.split());
+// 	show_debug_message("BogoSorted in: "+time+"("+string(time / 1000000)+"s)");
 	
 	
 	// merge sort
-	show_debug_message("#### MERGESORT ####");
- 	var arr = array.copy(); t.split(); // ignore array allocation time
+// 	var arr = array.copy();
+//     var time = string(t.split());
+// 	show_debug_message("Array allocated in: "+time);
 	
-	arr.mergeSort();
-	show_debug_message(arr);
+// 	show_debug_message(arr.mergeSort());
 	
- 	var time = string(t.split());
- 	show_debug_message("MergeSorted in: "+time);
-	show_debug_message("AS YOU CAN SEE, MERGE SORT DOESN'T WORK...");
-	
+// 	var time = string(t.split());
+// 	show_debug_message("MergeSorted in: "+time);
 	
 	
 	// bubble sort
-	show_debug_message("#### BUBBLESORT ####");
-	var arr = array.copy(); t.split(); // ignore array allocation time
+	var arr = array.copy();
+    var time = string(t.split());
+	show_debug_message("Array allocated in: "+time);
 	
-	arr.sort();
-	show_debug_message(arr);
+	show_debug_message(arr.sort());
 	
 	var time = string(t.split());
 	show_debug_message("BubbleSorted in: "+time);
-	
-	
-	
-	// quick sort
-	show_debug_message("#### QUICKSORT ####");
-	var arr = array.copy(); t.split(); // ignore array allocation time
-	
-	arr.quickSort();
-	
-	var time = string(t.split());
-	show_debug_message("QuickSorted in: "+time);
-	
-	show_debug_message(arr)
-	
-	
-	//// bogosort (OMEGALUL)
- 	//show_debug_message("#### BOGOSORT (OMG) ####");
-	
- 	//var arr = array.copy(); t.split();
-	
-	//arr.bogosort();
-	
- 	//var time = string(t.split());
- 	//show_debug_message("BogoSorted in: "+time+"("+string(time / 1000000)+"s)");
 }

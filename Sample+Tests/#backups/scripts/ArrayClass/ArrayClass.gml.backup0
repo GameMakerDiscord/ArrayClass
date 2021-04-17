@@ -1,11 +1,10 @@
+// 2020-09-15 10:45:15
 ///!!!
 /// For examples see Tests.gml
 ///!!!
 
 // See type-conversion API at the bottom of this file
 
-globalvar ARRAY_LOOP; // edit this inside forEach, filter, etc. to exit a loop
-ARRAY_LOOP = 1;
 
 ///@function	Array(*item1, *item2, ...)
 ///@description	Constructor funcion for Array objects
@@ -26,9 +25,6 @@ function Array() constructor {
 		}
 		else if ARRAY_SHOW_WARNING {
 			show_debug_message("Array error: "+string(err))
-		}
-		else {
-			// nothing
 		}
 	}
 	
@@ -95,12 +91,11 @@ function Array() constructor {
 	///@function	copy()
 	///@description	Returns a copy of the array object
 	static copy = function() {
-		var ans = new Array();
+		ans = new Array();
 		
-		for(var i = 0; i < size; ++i) {
-			var el = get(i);
-			ans.push(el);
-		}
+		forEach(function(el) {
+			ans.append(el);
+		});
 		
 		return ans;
 	}
@@ -157,39 +152,38 @@ function Array() constructor {
 	
 	///@function	exists(value)
 	///@description	Returns true if the value exists in the array and false otherwise
-	static exists = function(val) {
-		var ans = false;
-		for(var i = 0; i < size; ++i) {
-			if (get(i) == val) {
+	static exists = function(_val) {
+		val = _val;
+		ans = false;
+		
+		forEach(function(x, pos) {
+			if(x == val) {
 				ans = true;
-				break;
+				return 1; //Break out of forEach()
 			}
-		}
+		});
 		
 		return ans;
 	}
 	
 	///@function	filter(func)
 	///@description	Loops through the array and passes each value into a function.
-	///				Filters the array to only include values, that returned true.
+	///				Returns a new array with only values, that returned true.
 	///				Function func gets (x, *pos) as input
+	///				Note: Clean function. Does not affect the original array!
 	///@param		{function} func
 	static filter = function(_func) {
 		func = _func;
-		var ans = new Array();
+		ans = new Array();
 		
-		ARRAY_LOOP = true;
-		for(var i = 0; i < size; ++i) {
-			if(func(get(i), i))
-				ans.append(get(i));
-			
-			if (!ARRAY_LOOP)
-				break;
-		}
+		forEach(function(x, pos) {
+			if(func(x, pos))
+				ans.append(x);
+		});
 		
-		content = ans.content;
-		size = ans.size;
-		return self;
+		//content = ans.content;
+		//return self;
+		return ans;
 	}
 	
 	///@function	find(value)
@@ -197,14 +191,14 @@ function Array() constructor {
 	///@param		{any} value
 	static find = function(_val) {
 		val = _val;
-		var ans = -1;
+		ans = -1;
 		
-		ans = findAnswer(function(x, pos, ans) {
+		forEach(function(x, pos) {
 			if(x == val) {
-				ARRAY_LOOP = 0;
-				return pos;
+				ans = pos;
+				return 1; //Break out of forEach()
 			}
-		}, ans);
+		});
 		
 		return ans;
 	}
@@ -212,55 +206,17 @@ function Array() constructor {
 	///@function	findAll(value)
 	///@description	finds all places a value appears and returns an Array with all the positions. empty set if not found
 	///@param		{any} value
-	static findAll = function(val) {
-		var ans = new Array();
+	static findAll = function(_val) {
+		val = _val;
+		ans = new Array();
 		
-		ans = findAnswer(function(x, pos, struct) {
-			var val = struct.val;
-			var ans = struct.ans;
-			
-			if(x == val) {
+		forEach(function(x, pos) {
+			if(x == val)
 				ans.append(pos);
-			}
-			
-			if (pos == size-1) {
-				ARRAY_LOOP = false;
-				return ans;
-			}
-			else {
-				return {ans: ans, val: val}
-			}
-		}, {ans: ans, val: val});
+		});
 		
 		return ans;
 	}
-	
-	///@function	findAnswer(func, def_ans)
-	///@description	loops over the Array and returns the value when your function sets ARRAY_LOOP to `false`
-	///				works not too unlike forEach(), but uses function format `foo(val, idx, ans)`, on first iteration ans = undefined
-	///				alternatively you can provide a default answer, that gets passed into the first iteration
-	///				basically this is a customized find() function, that can return anything you want
-	///@note		
-	///				Note: Loop will stop immediately if you set ARRAY_LOOP globalvar to 0
-	///@param		{function} func
-	///@param		{any} def_ans
-	static findAnswer = function(func, ans) {
-		if (argument_count < 2)
-			ans = undefined;
-		
-		ARRAY_LOOP = true;
-		
-		for(var i = 0; i < size; ++i) {
-			ans = func(get(i), i, ans);
-			if (!ARRAY_LOOP) {
-				break;
-			}
-		}
-		
-		return ans;
-	}
-	
-	static findCustom = findAnswer;
 
 	///@function	first()
 	///@description	Returns the first value of the array
@@ -270,16 +226,13 @@ function Array() constructor {
 	
 	///@function	forEach(func)
 	///@description	Loops through the array and runs the function with each element as an argument
-	///				Function format is `foo(val, *pos)` (function takes value and position as arguments)
-	///				Note: Loop will stop immediately if you set ARRAY_LOOP globalvar to 0
-	///@param		{function} func
+	///				Function func gets (x, *pos) as arguments
+	///				Note: Loop will stop immediately if the function returns anything but zero or undefined
+	///@param		{function} func(x, *pos)
 	static forEach = function(func) {
-		ARRAY_LOOP = true;
-		
 		for(var i = 0; i < size; i++) {
-			//var res = 
-			func(get(i), i)
-			if(!ARRAY_LOOP) {
+			var res = func(get(i), i)
+			if(!is_undefined(res) and res != 0) {
 				break;
 			}
 		}
@@ -353,10 +306,9 @@ function Array() constructor {
 	///@param       {function} func
 	static isSorted = function(func) {
 	    if is_undefined(func) {
-	        //func = function(a, b) {
-	        //    return a < b;
-	        //}
-			func = SORT_ASCENDING
+	        func = function(a, b) {
+	            return a < b;
+	        }
 	    }
 	    
 	    for(var i = 1; i < size; ++i) {
@@ -399,14 +351,9 @@ function Array() constructor {
 	///@function	lambda(func)
 	///@description	Loops through the array and applies the function to each element
 	///@param		{function} func(x, *pos)
-	///				Note: Loop will stop immediately if you set ARRAY_LOOP globalvar to 0
 	static lambda = function(func) {
-		ARRAY_LOOP = true;
-		
 		for(var i = 0; i < size; i++) {
-			set(i, func(get(i),i) );
-			if(!ARRAY_LOOP)
-				break;
+			set(i, func(get(i), i) );
 		}
 		
 		return self;
@@ -421,17 +368,18 @@ function Array() constructor {
 	///@function	_max()
 	///@description	Returns a maximum of the array. Only works with numbers
 	static _max = function() {
-		var ans = get(0);
+		ans = get(0);
 		
-		ans = findAnswer(function(x, ans) {
+		forEach(function(x) {
 			if(!is_numeric(x)) {
 				__throw( "TypeError: Trying to calculate maximum of "+typeof(x)+"");
-				return undefined; // Break out of the loop
+				ans = undefined;
+				return 1 // Break out of forEach()
 			}
 			
 			if(x > ans)
-				return x;
-		}, ans);
+				ans = x;
+		});
 		
 		return ans;
 	}
@@ -439,18 +387,18 @@ function Array() constructor {
 	///@function	_min()
 	///@description	Returns a minimum of the array. Only works with numbers
 	static _min = function() {
-		var ans = get(0);
+		ans = content[0];
 		
-		forEach(function(x, ans) {
+		forEach(function(x) {
 			if(!is_numeric(x)) {
 				__throw( "TypeError: Trying to calculate minimum of "+typeof(x)+"");
-				ARRAY_LOOP = false;
-				return undefined;
+				ans = undefined;
+				return 1
 			}
 			
 			if(x < ans)
-				return x;
-		}, ans);
+				ans = x;
+		});
 		
 		return ans;
 	}
@@ -468,7 +416,7 @@ function Array() constructor {
 	///@function    merged(other)
 	///@description like merge() method, but without modifying the original array
 	static merged = function(_other) {
-	    var ans = self.copy();
+	    ans = self.copy();
 	    _other.forEach(function(item) {
 	        ans.append(item);
 	    })
@@ -477,16 +425,14 @@ function Array() constructor {
 	}
 	
 	///@function    __merge(other)
-	///@description an internal function, used for MergeSorting.
-	///				Not for you to use. (unless you know what you're doing) :]
-	static __merge = function(func, _other) {
+	///@description an internal function, used for MergeSorting. Not for you to use (unless you know what you're doing) :]
+	static __merge = function(_other) {
 	    var ans = array_create(size + _other.size);
 	    var i = 0;
 	    var j = 0;
 	    var k = 0;
 	    while(i < size && j < _other.size) {
-	        //if self.get(i) < _other.get(j) {
-			if func(self.get(i), _other.get(j)) {
+	        if self.get(i) < _other.get(j) {
 	            ans[k] = self.get(i);
 	            i++;
 	        }
@@ -510,50 +456,43 @@ function Array() constructor {
 	        k++;
 	    }
 	    
-	    return array_to_Array(ans);
+	    return ans;
 	}
 	
-	///@note		Does not affect the original array!! (due to the internal recursive way it works)
-	///				!!! This is an internal function! You probably want to use the version without '__' !!!
-	///				(unless you know what you're doing)
-	static __mergeSort = function(func, l, r) {
-		if is_undefined(func)
-			func = SORT_ASCENDING
-	    if is_undefined(l)
+	///@function    mergeSort(l, r)
+	///@description Sorts the array using merge sort algorithm (pretty fast)
+	static mergeSort = function(l, r) {
+	    if size == 1
+	        return self;
+	    
+	    if is_undefined(l) {
 	        l = 0;
+	    }
 	    if is_undefined(r)
 	        r = size;
-		
-		
-		if (r - l <= 1) || size <= 1
-			return slice(l, r);
-	        //return self;
-		
-	    var mid = (l + r - 1) / 2;
-		
-		if (size % 2 == 0) {
-			var L = slice(l, mid).__mergeSort(func);
-			var R = slice(mid+1, r).__mergeSort(func);
-		}
-		else {
-			var L = slice(l, mid).__mergeSort(func);
-			var R = slice(mid, r).__mergeSort(func);
-		}
-		
-	    var _merged = L.__merge(func, R);
 	    
-        return _merged;
-	}
-	
-	///@function    __mergeSort(l, r, func)
-	///@description Sorts the array using merge sort algorithm
-	///				In theory this should be fast, but my implementation is slower than bubble sort :)
-	///				So actually there's no reason to use this...
-	///@param		{function} func - a function, used to compare values. See .sort() for explanation
-	///@param		{real} l - the index to start the sort from. Defaults to 0
-	///@param		{real} r - the index to end the sort on (including). Defaults to array.size
-	static mergeSort = function(func, l, r) {
-		return __mergeSort(func, l, r)
+	   // var mid = (size - 1) div 2;
+	   // var left = (slice(0, mid)).mergeSort();
+	   // var right = (slice(mid+1, size)).mergeSort();
+	    
+	    var mid = (l + r - 1) div 2;
+	    var left = mergeSort(l, mid);
+	    var right = mergeSort(mid+1, r);
+	    
+	    
+	    show_debug_message("left: "+left.toString());
+	    show_debug_message("right: "+right.toString());
+	    
+	    var _merged = left.__merge(right);
+	    
+	   // if (first_time) {
+	   //     content = _merged.content;
+	   //     size = array_length(content);
+	   //     return self;
+	   // }
+	   // else {
+	        return _merged;
+	   // }
 	}
 	
 	///@function	number(value)
@@ -576,7 +515,7 @@ function Array() constructor {
 	///@function	pop()
 	///@description	removes a value from the end of the array and returns it
 	static pop = function() {
-		var ans = last();
+		ans = last();
 		if(empty()) {
 			__throw( "Error: trying to pop value from empty Array");
 			return undefined;
@@ -590,7 +529,7 @@ function Array() constructor {
 	///@function	popBack()
 	///@description	removes a value from the beginning of the array and returns it
 	static popBack = function() {
-		var ans = first();
+		ans = first();
 		remove(0);
 		
 		return ans;
@@ -616,50 +555,8 @@ function Array() constructor {
 		insert(0, val);
 	}
 	
-	// An internal function, used for QuickSort
-	static __partition = function(func, l, r) {
-		//show_debug_message(slice(l, r-1))
-		var i = l-1;
-		var j = l;
-		var piv = get(r);
-		
-		for(j = l; j < r; ++j) {
-			//if get(j) <= piv {
-			if func(get(j), piv) {
-				i++;
-				swap(i, j);
-			}
-		}
-		
-		swap(i+1, j);
-		
-		return i;
-	}
-	
-	///@function	quickSort(func, l, r)
-	///@param		{function} func
-	///@param		{int} l
-	///@param		{int} r
-	static quickSort = function(func, l, r) { // including r
-		if is_undefined(func)
-			func = SORT_ASCENDING
-		if is_undefined(l)
-			l = 0
-		if is_undefined(r)
-			r = size-1
-		
-		if (l < r-1) {
-			var pivot = __partition(func, l, r);
-			
-			quickSort(func, l, pivot);
-			quickSort(func, pivot+1, r);
-		}
-		
-		return self;
-	}
-	
 	///@function    radixSort()
-	///@description sorts the array using radix sort algorithm
+	///@description sorts the array using radix sort algorythm
 	static radixSort = function(digits) {
 	    
 	    static getDigit = function(num, digit) { // digit from right to left
@@ -671,14 +568,8 @@ function Array() constructor {
 	    
 	    for(var digit = 0; digit < digits; ++digit) {
 	        // 0-9 indexies representing each possible digit
-	        static counters = array_create(10, 0);
-	        static output = array_create(size, -1);
-			
-			for(var i = 9; i >= 0; --i)
-				counters[i] = 0;
-			
-			for(var i = size-1; i >= 0; --i)
-				output[i] = -1;
+	        var counters = array_create(10, 0);
+	        output = array_create(size, -1);
 	        
 	        for(var i = 0; i < size; ++i) {
 	            var dig = getDigit(content[i], digit);
@@ -686,8 +577,7 @@ function Array() constructor {
 	        }
 	        
 	        // sum
-			var len = array_length(counters)
-	        for(var i = 1; i < len; ++i) {
+	        for(var i = 1; i < array_length(counters); ++i) {
 	            counters[i] += counters[i - 1]; // get positions
 	        }
 	        
@@ -704,8 +594,7 @@ function Array() constructor {
 	            output[pos] = content[i];
 	        }
 	        
-	        //array_copy(content, 0, output, 0, array_length(output));
-			content = output;
+	        array_copy(content, 0, output, 0, array_length(output));
 	    }
 	    
 	    return self;
@@ -738,17 +627,6 @@ function Array() constructor {
 		return self;
 	}
 	
-	///@function	removeValue(value)
-	///@description	removes a selected value from the array
-	///@param		{any} value
-	static removeValue = function(value) {
-		var idx = find(value);
-		if (idx > -1)
-			remove(idx);
-		
-		return self;
-	}
-	
 	///@function	resize(size)
 	///@description	resizes the array. Sizing up leads to filling the empty spots with zeros
 	///@param		{real} size
@@ -769,13 +647,12 @@ function Array() constructor {
 	}
 	
 	///@function	reverse()
-	///@description	reverses the array (overrides its contents)
+	///@description	reverses the array, affecting it
 	static reverse = function() {
-		var ans = new Array();
-		//forEach(function(element, pos) {
-		//	ans.set(size-pos-1, element);
-		//});
-		findAnswer()
+		ans = new Array();
+		forEach(function(element, pos) {
+			ans.set(size-pos-1, element);
+		});
 		
 		content = ans.content;
 		return self;
@@ -784,14 +661,10 @@ function Array() constructor {
 	///@function	reversed()
 	///@description	Returns reversed version of the array, without affecting the original
 	static reversed = function() {
-		var ans = new Array();
-		//forEach(function(element, pos) {
-		//	ans.set(size-pos-1, element);
-		//});
-		for(var i = 0; i < size; ++i) {
-			var element = get(i)
-			ans.set(size-i-1, element)
-		}
+		ans = new Array();
+		forEach(function(element, pos) {
+			ans.set(size-pos-1, element);
+		});
 		
 		return ans;
 	}
@@ -824,7 +697,7 @@ function Array() constructor {
 		if(is_undefined(_end))
 			_end = size;
 		
-		var ans = new Array();
+		ans = new Array();
 		
 		
 		if(_begin > _end) {
@@ -839,18 +712,6 @@ function Array() constructor {
 		}
 		
 		return ans;
-	}
-	
-	///@function	some(predicate)
-	///@description	Returns whether there's an element in the Array that matches the predicate function
-	///@param		{function} predicate
-	static some = function(predicate) {
-		for(var i = 0; i < size; i++) {
-			var val = get(i)
-			if (predicate(val, i))
-				return true;
-		}
-		return false;
 	}
 	
 	///@function	sort(func, *startpos, *endpos)
@@ -923,21 +784,20 @@ function Array() constructor {
 	///NOTE: Works only with strings or numbars and only if all the elements are the same type.
 	static sum = function() {
 		if(is_string(get(0)))
-			var ans = "";
+			ans = "";
 		else if(is_numeric(get(0)))
-			var ans = 0;
+			ans = 0;
 		else {
 			__throw( "TypeError: trying to sum up elements, that aren't strings or reals");
 			return undefined;
 		}
 		
-		for(var i = 0; i < size; ++i) {
-			var el = get(i);
-			if (typeof(el) != typeof(ans))
+		forEach(function(el) {
+			if(typeof(el) != typeof(ans))
 				__throw( "TypeError: Array elements aren't the same type: got "+typeof(el)+", "+typeof(ans)+" expected.");
 			
 			ans += el;
-		}
+		});
 		
 		return ans;
 	}
@@ -957,54 +817,15 @@ function Array() constructor {
 	///@function	unique()
 	///@description	Returns a copy of this Array object, deleting all duplicates
 	static unique = function() {
-		var ans = new Array();
+		ans = new Array();
 		
-		//forEach(function(x) {
-		//	if(!ans.exists(x))
-		//		ans.append(x);
-		//});
-		for(var i = 0; i < size; ++i) {
-			if (!ans.exists(get(i)))
-				ans.push(get(i));
-		}
+		forEach(function(x) {
+			if(!ans.exists(x))
+				ans.append(x);
+		});
 		
 		return ans;
 	}
-	
-	
-	///@function	where(func)
-	///@description	Loops through the array and passes each value into a function.
-	///				Returns a new array with only values, that returned true.
-	///				Function func gets (x, *pos) as input
-	///				Note: Clean function. Does not affect the original array!
-	///@param		{function} func
-	static where = function(_func) {
-		func = _func;
-		var ans = new Array();
-		
-		for(var i = 0; i < size; ++i) {
-			if(func(get(i), i))
-				ans.append(get(i));
-		}
-		
-		return ans;
-	}
-	
-	static wrapIndex = function(idx) {
-		if (size == 0)
-			return idx
-		
-		while(idx >= size) {
-			idx -= size
-		}
-		
-		while (idx < 0) {
-			idx += size
-		}
-		
-		return idx
-	}
-	
 
 	for(var i = 0; i < argument_count; i++)
 		append(argument[i])
@@ -1056,62 +877,30 @@ function Range() : Array() constructor {
 }
 
 
-///@function	RandomArray(size, pool)
-///@param		{real} size
-///@param		{Array} pool
-///@description	Creates an array and fills it with random contents from the pool.
-///				If pool is not provided, Range(100) is used
-///				If pool is numeric, Range(pool) is used
-function RandomArray(_size, pool) : Array() constructor {
-	if is_undefined(_size)
-		_size = 0;
-	if is_undefined(pool)
-		pool = new Range(100);
-	else if is_numeric(pool)
-		pool = new Range(pool);
-	else if is_array(pool)
-		pool = array_to_Array(pool);
-	
-	
-	repeat(_size) {
-		self.append(pool.getRandom());
-	}
-	
-	return self;
-}
-
-
 ///@function	Iterator(arr)
 ///@description	Constructs an iterator object to allow easier iteration through Array's
-// actually i have no idea why you would use these
 function Iterator(arr) constructor {
 	self.index = -1;
 	self.value = undefined;
 	self.array = arr
-	self.loop = false
 	
 	///@function	next()
-	static next = function() {
+	next = function() {
 		index++;
-		if (index > array.size) {
+		try {
 			value = array.get(index);
 		}
-		else {
-			if (loop) {
-				index = 0
-				value = array.get(index)
-			}
-			else {
-				value = undefined;
-			}
+		catch(e) {
+			value = undefined;
 		}
 		
 		return value;
 	}
 	
-	static get = function() {
+	get = function() {
 		return value;
 	}
+	
 	
 	return self;
 }
@@ -1127,7 +916,7 @@ function array_to_Array(array) {
 		return undefined;
 	}
 	
-	var ans = new Array();
+	ans = new Array();
 	
 	for(var i = 0; i < array_length(array); i++) {
 		ans.append(array[i]);
@@ -1152,7 +941,7 @@ function ds_list_to_Array(list) {
 		return undefined;
 	}
 	
-	var ans = new Array();
+	ans = new Array();
 	
 	for(var i = 0; i < ds_list_size(list); i++) {
 		ans.append(list[| i]);
@@ -1190,14 +979,7 @@ function ds_list_from_Array(Arr) {
 	
 	_list = ds_list_create()
 	Arr.forEach(function(item) {
-		//if (is_Array(item)) {
-		//	item = ds_list_from_Array(item)
-		//	ds_list_add(_list, item)
-		//	ds_list_mark_as_list(_list, ds_list_size(_list)-1)
-		//}
-		//else {
-			ds_list_add(_list, item)
-		//}
+		ds_list_add(_list, item)
 	})
 	return _list
 }
@@ -1245,49 +1027,3 @@ function ds_list_from_array(arr) {
 function array_to_ds_list(arr) {
 	return ds_list_from_array(arr)
 }
-
-
-// for nerds who care about optimization and use native arrays
-#region non-OO arrays functions
-
-///@function	array_exists(array, val)
-///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
-function array_exists(array, val) {
-	var _len = array_length(array)
-	for(var i = 0; i < _len; ++i) {
-		if (array[i] == val)
-			return true
-	}
-	
-	return false
-}
-
-///@function	array_find(array, val)
-///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
-function array_find(array, val) {
-	var _len = array_length(array)
-	for(var i = 0; i < _len; ++i) {
-		if (array[i] == val)
-			return i
-	}
-	
-	return -1
-}
-
-///@function	array_foreach(array, func)
-///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
-function array_foreach(array, func) {
-	var _len = array_length(array)
-	for(var i = 0; i < _len; ++i) {
-		func(array[i], i)
-	}
-}
-
-///@function	array_push(array, val)
-///@description	IMPORTANT: Used for native gm arrays, not Array Class!!!
-function array_push(array, val) {
-	array[@ array_length(array)] = val
-}
-
-
-#endregion
