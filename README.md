@@ -8,7 +8,7 @@ It's main focus is not performance, but rather handiness for developer
 ### Maintained by [@evolutionleo](https://github.com/evolutionleo)
 
 ## > Edit: 04.21
-As of GMS version 2.3.1 YoYo Games introduced a handier API for arrays, so this lib is not that relevant as it previously was
+As of GMS version 2.3.1 YoYo Games introduced a handier API for arrays, so this lib is not as relevant as it previously was
 
 So it's no longer really worth it using this just for simple append/delete logic, but instead only if you need any somewhat complex array functionality (e.x. shuffle, get random, filter, etc.)
 
