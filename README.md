@@ -54,37 +54,37 @@ This might really come in handy when using `.forEach()`
 ## Adding Values:
 
 ### GM arrays:
-```
+```gml
 [pre 2.3.1] arr[array_length(arr) - 1] = item
 [2.3.1+]    array_push(arr, item)
 ```
 ### Array Class:
-```
+```gml
 arr.add(item)
 ```
 
 ## Looping:
 ### GM arrays:
-```
+```gml
 for(var i = 0; i < array_length(arr); i++) {
   foo(arr[i], i)
 }
 ```
 ### Array Class:
-```
+```gml
 arr.forEach(foo)
 ```
 
 ## Deleting values:
 ### GM arrays:
-```
+```gml
 [pre 2.3.1] for(var i = pos; i < array_length(arr) - 1; i++) {
               arr[i] = arr[i + 1];
             }
 [2.3.1+]    array_delete(arr, pos, 1)
 ```
 ### Array Class:
-```
+```gml
 arr.remove(pos)
 ```
 
